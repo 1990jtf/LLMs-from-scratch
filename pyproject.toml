@@ -9,10 +9,13 @@ description = "Implement a ChatGPT-like LLM in PyTorch from scratch, step by ste
 readme = "README.md"
 requires-python = ">=3.10,<3.15"
 dependencies = [
-  "torch>=2.2.2,<2.6; sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version <= '3.14'",
-  "torch>=2.2.2; sys_platform == 'darwin' and platform_machine == 'arm64' and python_version <= '3.14'",
-  "torch>=2.2.2; sys_platform == 'linux' and python_version <= '3.14'",
-  "torch>=2.2.2; sys_platform == 'win32' and python_version <= '3.14'",
+  # CPython 3.13+ wheels start at torch 2.6. 2.5.1 only publishes manylinux1_x86_64.
+  # Intel macOS has no torch wheels on 3.13+, so keep the <2.6 pin on Python <=3.12 only.
+  "torch>=2.6; python_version >= '3.13' and python_version <= '3.14' and (sys_platform != 'darwin' or platform_machine != 'x86_64')",
+  "torch>=2.2.2,<2.6; sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version <= '3.12'",
+  "torch>=2.2.2; sys_platform == 'darwin' and platform_machine == 'arm64' and python_version <= '3.12'",
+  "torch>=2.2.2; sys_platform == 'linux' and python_version <= '3.12'",
+  "torch>=2.2.2; sys_platform == 'win32' and python_version <= '3.12'",
   "tensorflow>=2.16.2; sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version < '3.13'",
   "tensorflow>=2.18.0; sys_platform == 'darwin' and platform_machine == 'arm64' and python_version < '3.13'",
   "tensorflow-cpu>=2.18.0; sys_platform == 'linux' and platform_machine == 'x86_64' and python_version < '3.13'",
@@ -26,6 +29,12 @@ dependencies = [
   "pandas>=2.2.1",
   "pip>=25.0.1",
   "pytest>=9.1.1",
+]
+
+[tool.uv]
+# Keep Apple Silicon on its own fork so it does not inherit the Intel macOS torch<2.6 pin.
+required-environments = [
+  "sys_platform == 'darwin' and platform_machine == 'arm64'",
 ]
 
 [tool.uv.sources]
