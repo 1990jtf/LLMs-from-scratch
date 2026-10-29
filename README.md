@@ -37,6 +37,13 @@ git clone --depth 1 https://github.com/rasbt/LLMs-from-scratch.git
 <br>
 <br>
 
+# 运维
+```bash
+# 同步环境
+uv sync
+# 运行jupyter-lab
+uv run jupyter-lab
+```
 
 # Table of Contents
 
